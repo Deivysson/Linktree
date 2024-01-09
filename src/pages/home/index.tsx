@@ -17,6 +17,7 @@ export function Home(){
             </a>
         </section>
 
+
         <footer className="flex justify-center gap-3 my-4">
             
             <Social url="https://www.facebook.com/">

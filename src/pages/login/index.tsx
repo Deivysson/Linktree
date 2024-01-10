@@ -1,11 +1,23 @@
 import { Link } from "react-router-dom"
 import { Input } from "../../components/Input"
-import { useState } from "react"
+import { FormEvent, useState } from "react"
+
+import { auth } from "../../services/firebaseConnection";
 
 export function Login(){
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    function handleSubmit(e: FormEvent){
+        e.preventDefault();
+
+        console.log({
+            email: email,
+            password: password
+        })
+    }
+
 
     return(
     <div className="flex w-full h-screen items-center justify-center flex-col">
@@ -15,7 +27,7 @@ export function Login(){
         </h1>
     </Link>
 
-    <form className="w-full max-w-xl flex flex-col px-2">
+    <form onSubmit={handleSubmit} className="w-full max-w-xl flex flex-col px-2">
         <Input 
         placeholder="Digite seu email..."
         type="email"

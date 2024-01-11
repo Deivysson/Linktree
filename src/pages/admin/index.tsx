@@ -1,6 +1,11 @@
-import { useState } from "react"
+import { FormEvent, useState } from "react"
 import { Header } from "../../components/Header/header"
 import { Input } from "../../components/Input"
+import { FiTrash } from "react-icons/fi"
+import { db } from "../../services/firebaseConnection"
+
+import { addDoc, collection, onSnapshot, query, orderBy, doc, deleteDoc } from "firebase/firestore"
+// addDoc - Adicionar documento na coleçao, gera ID automatico.
 
 export function Admin(){
     const [nameInput, setNameInput] = useState("")
@@ -8,11 +13,35 @@ export function Admin(){
     const [textColorInput, setTextColorInput] = useState("#f1f1f1")
     const [backgroundColorInput, setBackgroundColorInput] = useState("#121212")
 
+    function handleRegister(e: FormEvent){
+        e.preventDefault();
+
+       if(nameInput === "" || urlInput === ""){ //validando os dados
+        alert("Preencha os campos")
+        return;
+       }
+
+       addDoc(collection(db, "links"), { //depois da validação. collection é do banco de dados.
+        name: nameInput,
+        url: urlInput,
+        bg: backgroundColorInput,
+        color: textColorInput,
+        created: new Date() // criar a data de criação.
+       })
+       .then(() => { // para zerar o campo depois de adicionar.
+        setNameInput("")
+        setUrlInput("")
+       })
+       .catch((error) => {
+        console.log("Error" + error)
+       })
+    }
+
     return(
     <div className="flex items-center flex-col min-h-screen pb-7 px-2">
     <Header />
 
-    <form className="flex flex-col mt-8 mb-3 w-full max-w-xl">
+    <form className="flex flex-col mt-8 mb-3 w-full max-w-xl" onSubmit={handleRegister}>
         <label className="text-white font-medium mt-2 mb-2">Nome do Link</label>
         <Input 
         placeholder="Digite seu link..."
@@ -47,16 +76,41 @@ export function Admin(){
             </div>
         </section>
 
-        <div className="flex items-center justify-start flex-col mb-7 p-1 border-gray-100/25 border rounded-md">
+        {nameInput !== '' && ( // So aparecer depois que tiver dados digitados.
+            <div className="flex items-center justify-start flex-col mb-7 p-1 border-gray-100/25 border rounded-md">
             <label className="text-white font-medium mt-2 mb-3">Veja como está ficando:</label>
             <article
             className="w-11/12 max-w-lg flex flex-col items-center justify-between bg-zinc-900 rounded px-1 py-3"
             style={{ marginBottom: 8, marginTop: 8, backgroundColor: backgroundColorInput}}
             >
-            <p style={{color: textColorInput}}>Canal do Youtube</p>
+            <p style={{color: textColorInput}}> {nameInput} </p>
             </article>
         </div>
+        )}
+
+        <button type="submit" className="mb-7 bg-blue-600 h-9 rounded-md text-white font-medium gap-4 flex justify-center items-center">
+            Cadastrar
+        </button>
+
     </form>
+
+    <h2 className="font-bold text-white mb-4 text-2xl">
+        Meus Links
+    </h2>
+
+    <article
+    className="flex items-center justify-between w-11/12 max-w-xl rounded py-3 px-2 mb-2 select-none"
+    style={{ backgroundColor: "#2563EB", color: "#FFF"}}
+    >
+    <p>Canal do YouTube</p>
+    <div>
+        <button
+        className="border border-dashed p-1 rounded bg-neutral-900"
+        >
+        <FiTrash size={18} color="#fff"/>
+        </button>
+    </div>
+    </article>
 
     </div>
     )

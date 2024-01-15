@@ -78,7 +78,7 @@ export function Admin(){
     }
 
     async function handleDeleteLink(id: string){
-        const docRef = doc(db, "links", id)
+        const docRef = doc(db, "links", id) //doc para acessar o item especifico do banco, no caso o links.
         await deleteDoc(docRef)
     }
 
